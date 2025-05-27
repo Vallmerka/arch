@@ -1,4 +1,9 @@
 #!/bin/bash
+# -*- coding: utf-8 -*-
+
+# Устанавливаем кодировку
+export LANG=ru_RU.UTF-8
+export LC_ALL=ru_RU.UTF-8
 
 # === НАСТРОЙКИ ===
 DISK="/dev/sda"   # Измените, если диск другой
@@ -124,11 +129,16 @@ install_all_packages() {
 
 # === ФУНКЦИЯ: Базовые настройки системы ===
 setup_system() {
-    arch-chroot /mnt ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-    arch-chroot /mnt hwclock --systohc
-    echo "$LOCALE UTF-8" > /mnt/etc/locale.gen
+    # Настройка локали и кодировки
+    echo "en_US.UTF-8 UTF-8" > /mnt/etc/locale.gen
+    echo "$LOCALE UTF-8" >> /mnt/etc/locale.gen
     arch-chroot /mnt locale-gen
     echo "LANG=$LOCALE" > /mnt/etc/locale.conf
+    echo "LC_ALL=$LOCALE" >> /mnt/etc/locale.conf
+    
+    # Остальные настройки
+    arch-chroot /mnt ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+    arch-chroot /mnt hwclock --systohc
     echo "$HOSTNAME" > /mnt/etc/hostname
     echo "127.0.0.1   localhost" > /mnt/etc/hosts
     echo "::1         localhost" >> /mnt/etc/hosts
