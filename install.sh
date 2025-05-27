@@ -1,30 +1,30 @@
 #!/bin/bash
 # -*- coding: utf-8 -*-
 
-# Импортируем общие функции
+# Import common functions
 source common.sh
 
-# Проверяем, запущен ли скрипт от root
+# Check if running as root
 check_root
 
-# Запрашиваем данные у пользователя
-echo "=== Настройка установки ==="
-read -p "Введите имя пользователя: " USERNAME
-read -p "Введите имя компьютера (hostname): " HOSTNAME
-read -s -p "Введите пароль для пользователя: " USERPASS
+# Get user input
+echo "=== Installation Setup ==="
+read -p "Enter username: " USERNAME
+read -p "Enter computer name (hostname): " HOSTNAME
+read -s -p "Enter user password: " USERPASS
 echo
-read -s -p "Введите пароль для root: " ROOTPASS
+read -s -p "Enter root password: " ROOTPASS
 echo
 
-# Сохраняем введенные данные
+# Save input data
 echo "USERNAME=\"$USERNAME\"" > /tmp/install_config
 echo "HOSTNAME=\"$HOSTNAME\"" >> /tmp/install_config
 echo "USERPASS=\"$USERPASS\"" >> /tmp/install_config
 echo "ROOTPASS=\"$ROOTPASS\"" >> /tmp/install_config
 
 if [ -f /mnt/step2 ]; then
-    echo "[2/2] Продолжаем установку после перезагрузки..."
-    # Загружаем сохраненные данные
+    echo "[2/2] Continuing installation after reboot..."
+    # Load saved data
     source /tmp/install_config
     install_all_packages
     setup_system
@@ -33,12 +33,12 @@ if [ -f /mnt/step2 ]; then
     remove_autorun
     rm /mnt/step2
     rm /tmp/install_config
-    echo "Установка завершена! Перезагрузите систему и войдите под пользователем $USERNAME."
+    echo "Installation complete! Reboot and login as $USERNAME."
     exit 0
 fi
 
-# [1/2] Первая часть: разметка, базовая установка, перезагрузка
-echo "=== Выбор диска для установки ==="
+# [1/2] First part: disk partitioning, base installation, reboot
+echo "=== Select Installation Disk ==="
 select_disk
 
 partition_and_format_disk
@@ -46,7 +46,7 @@ install_base_system
 cp /tmp/install_config /mnt/root/install_config
 touch /mnt/step2
 add_autorun
-echo "Перезагрузка... После перезагрузки установка продолжится автоматически."
+echo "Rebooting... Installation will continue automatically after reboot."
 reboot
 
 # Устанавливаем Hyprland и необходимые пакеты
